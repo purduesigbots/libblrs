@@ -10,24 +10,15 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-#ifndef _SML_H_
-#define _SML_H_
+#ifndef _MTRMGR_H_
+#define _MTRMGR_H_
 
 #include <API.h>
 
 #define SLEW_DELTA_T 20 //the update rate for the motors in ms
 #define NUM_MOTORS 10
-#define MOTOR_DEADBAND 7 //a pwm value of less than 8 will result in zero output to the motors
-#define DEFAULT_SLEW 0.5f //the recommended slew rate for 393 motors
 
 #define MUTEX_TAKE_TIMEOUT 100
-
-/**
- * Lookup table for True Speed calculation
- * This will need tuned for each subsystem to achieve a perfectly linear response,
- * but these values should be close enough for most applications.
- */
-extern const unsigned int trueSpeedLUT[128];
 
 /*
 * This defines a "Motor" and all of its corresponding information.
@@ -39,14 +30,13 @@ typedef struct {
   int cmd;                    // commanded pwm value
   unsigned long _lastUpdate;  // time (msec) of last commanded value
   float slewrate;             // caps the motor's acceleration
-  char inverted;              // flips the motor output to avoid needing to electrically flipping motors
+  char inverted;              // flips the motor output to avoid electrically flipping motors
   bool immediate;             // bypasses the slewrate and immediately sets to desired motor power
   int(*recalculate)(int);     // used to scale the motor output for trueSpeed or other scalings
 } Motor;
 
 /**
  * @brief Initializes the Motor Manager Task by creating the Motor Mutexes and starting the task.
- *        NOTE: MUST BE CALLED IN "INIT.C" TO USE SML
  */
 void motorManagerInit();
 
@@ -61,17 +51,16 @@ void motorManagerStop();
  * @param channel
  *        The port of the motor [1,10]
  *
- * @param inverted
+ * @param invertedf
  *        If the motor port is inverted, then set to true (127 will become -127 and vice versa)
  *
- * @param slew
+ * @param slewa
  *        The acceleration of the motor in dPWM/millisecond. DEFAULT_SLEW_RATE is available, which sets dPWM/millisecond to 0.75
  *
  * @param recalculate
- *        function pointer to the scaling function for the motor. The default function (NULL) doesn't affect the output at all.
- *        passing "trueSpeed" here activates true speed recalculation
+ *        function pointer to the scaling function for the motor. Supplying NULL will not provide
  */
-void smartMotorInit(int port, bool inverted, float slew, int (*recalculate)(int));
+void blrsMotorInit(int port, bool inverted, float slew, int (*recalculate)(int));
 
 /**
  * @brief Change the motor speed
@@ -87,7 +76,7 @@ void smartMotorInit(int port, bool inverted, float slew, int (*recalculate)(int)
  *
  * @returns Returns true if MotorSet was successful.
  */
-bool smartMotorSet(int port, int speed, bool immediate);
+bool blrsMotorSet(int port, int speed, bool immediate);
 
 /**
  * @brief Returns the normalized commanded speed of the motor
@@ -97,17 +86,6 @@ bool smartMotorSet(int port, int speed, bool immediate);
  *
  * @returns Returns the cmd speed of the motor
  */
-int smartMotorGet(int port);
-
-/**
- * @brief linearizes the motor output to account for the MC29s
- *
- * @param cmd
- *        the set pwm value, pre-scaling
- *
- * @returns returns the linearized pwm output value
- *
-*/
-int trueSpeed(int cmd);
+int blrsMotorGet(int port);
 
 #endif

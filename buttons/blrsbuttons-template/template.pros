@@ -1,1 +1,0 @@
-{"py/object": "prosconductor.providers.TemplateConfig", "py/state": {"depot": "blrslib", "name": "blrsbuttons", "template_ignore": ["project.pros"], "upgrade_paths": ["firmware/blrsbuttons.a", "include/*.h"], "version": "1.0.0"}}

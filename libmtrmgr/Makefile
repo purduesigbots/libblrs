@@ -7,8 +7,8 @@ BINDIR=$(ROOT)/bin
 # Subdirectories to include in the build
 SUBDIRS=src
 
-
-LIBNAME=blrsbuttons
+# Nothing below here needs to be modified by typical users
+LIBNAME=libmtrmgr
 VERSION=1.0.0
 DEPOT=blrslib
 
@@ -26,7 +26,7 @@ CPPSRC:=$(wildcard *.$(CPPEXT))
 CPPOBJ:=$(patsubst %.o,$(BINDIR)/%.o,$(CPPSRC:.$(CPPEXT)=.o))
 OUT:=$(BINDIR)/$(OUTNAME)
 
-.PHONY: all clean upload library _force_look
+.PHONY: all clean upload _force_look
 
 # By default, compile program
 all: $(BINDIR) $(OUT)
@@ -35,7 +35,6 @@ all: $(BINDIR) $(OUT)
 clean:
 	-rm -f $(OUT)
 	-rm -rf $(BINDIR)
-	-rm -rf $(TEMPLATE)
 
 library: clean $(BINDIR) $(SUBDIRS) $(ASMOBJ) $(COBJ) $(CPPOBJ)
 	-rm -f $(BINDIR)/opcontrol.o $(BINDIR)/init.o $(BINDIR)/auto.o
