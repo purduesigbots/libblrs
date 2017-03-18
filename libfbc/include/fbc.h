@@ -68,11 +68,10 @@
   * @param resetSense
   *        An optional pointer to a function which resets the sensor to a default value.
   *        If NULL, then nothing is done
-  * @param computeError
-  *        A pointer to a function which determines the error to provide to the compute function.
-  *        This library provides fbcPosErr and fbcVelErr to compute standard position and velocity
-  *        errors. See their respective documentation for more information.
-  *        If NULL, then fbcPosErr is used
+  * @param neg_deadband
+  *        the minimum output in the negative direction for the controller. Zero negates this effect.
+  * @param pos_deadband
+  *        the minimum output in the positive direction for the controller. Zero negates this effect.
   * @param acceptableTolerance
   *        Maximum delta between the current sensor value and the goal sensor value to be considered on target
   *        for a given time slice
