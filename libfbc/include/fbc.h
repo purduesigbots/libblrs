@@ -14,6 +14,7 @@
  #define _FBC_H_
 
  #include <API.H>
+ #define FBC_LOOP_INTERVAL 20
 
  typedef struct fbc fbc_t; // predefine fbc_t for use inside fbc_t
  /**
@@ -40,6 +41,7 @@
    void (*resetController)(fbc_t*);
 
    int goal, output;
+   int pos_deadband, neg_deadband;
    unsigned int acceptableConfidence, acceptableTolerance;
    bool confident;
 
@@ -79,7 +81,7 @@
   *        on target.
   */
  void fbcInit(fbc_t* fbc, void (*move)(int), int (*sense)(void), void (*resetSense)(void),
-              int (*computeError)(fbc_t*), int acceptableTolerance, unsigned int acceptableConfidence);
+             int neg_deadband, int pos_deadband, int acceptableTolerance, unsigned int acceptableConfidence);
 
 /**
  * @brief Resets the feedback controller's goal, sensor state, and accumulating parameters, if applicable.
