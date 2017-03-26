@@ -14,6 +14,7 @@
  #define _FBC_H_
 
  #include <API.H>
+ #define FBC_LOOP_INTERVAL 20
 
  typedef struct fbc fbc_t; // predefine fbc_t for use inside fbc_t
  /**
@@ -40,6 +41,7 @@
    void (*resetController)(fbc_t*);
 
    int goal, output;
+   int pos_deadband, neg_deadband;
    unsigned int acceptableConfidence, acceptableTolerance;
    bool confident;
 
@@ -66,11 +68,10 @@
   * @param resetSense
   *        An optional pointer to a function which resets the sensor to a default value.
   *        If NULL, then nothing is done
-  * @param computeError
-  *        A pointer to a function which determines the error to provide to the compute function.
-  *        This library provides fbcPosErr and fbcVelErr to compute standard position and velocity
-  *        errors. See their respective documentation for more information.
-  *        If NULL, then fbcPosErr is used
+  * @param neg_deadband
+  *        the minimum output in the negative direction for the controller. Zero negates this effect.
+  * @param pos_deadband
+  *        the minimum output in the positive direction for the controller. Zero negates this effect.
   * @param acceptableTolerance
   *        Maximum delta between the current sensor value and the goal sensor value to be considered on target
   *        for a given time slice
@@ -79,7 +80,7 @@
   *        on target.
   */
  void fbcInit(fbc_t* fbc, void (*move)(int), int (*sense)(void), void (*resetSense)(void),
-              int (*computeError)(fbc_t*), int acceptableTolerance, unsigned int acceptableConfidence);
+             int neg_deadband, int pos_deadband, int acceptableTolerance, unsigned int acceptableConfidence);
 
 /**
  * @brief Resets the feedback controller's goal, sensor state, and accumulating parameters, if applicable.

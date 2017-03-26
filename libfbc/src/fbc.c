@@ -12,23 +12,25 @@
 
 #include "fbc.h"
 
-#define LOOP_INTERVAL 25
-
 static void _fbcTask(void* param) {
   fbc_t* fbc = (fbc_t*)param;
   unsigned long now = millis();
   while(true) {
     fbcRunContinuous(fbc);
-    taskDelayUntil(&now, LOOP_INTERVAL);
+    taskDelayUntil(&now, FBC_LOOP_INTERVAL);
   }
 }
 
-void fbcInit(fbc_t* fbc, void (*move)(int), int (*sense)(void), void (*resetSense)(void), int acceptableTolerance, unsigned int acceptableConfidence) {
+void fbcInit(fbc_t* fbc, void (*move)(int), int (*sense)(void), void (*resetSense)(void),
+            int neg_deadband, int pos_deadband, int acceptableTolerance, unsigned int acceptableConfidence) {
   fbc->move = move;
   fbc->sense = sense;
   fbc->resetSense = resetSense;
   fbc->acceptableTolerance = acceptableTolerance;
   fbc->acceptableConfidence = acceptableConfidence;
+  fbc->neg_deadband = neg_deadband;
+  fbc->pos_deadband = pos_deadband;
+  fbc->goal = 0;
 }
 
 void fbcReset(fbc_t* fbc) {
@@ -52,7 +54,13 @@ bool fbcIsConfident(fbc_t* fbc) {
 
 bool fbcRunContinuous(fbc_t* fbc) {
   int error = fbc->goal - fbc->sense();
-	fbc->move(fbc->compute(fbc, error));
+  int out = fbc->compute(fbc, error);
+  if (out < fbc->pos_deadband && out > 0)
+    out = fbc->pos_deadband;
+  else if (out > fbc->neg_deadband && out < 0)
+    out = fbc->neg_deadband;
+	fbc->move(out);
+
   if((unsigned int)abs(error) < fbc->acceptableTolerance)
     fbc->_confidence++;
   else
@@ -66,7 +74,7 @@ bool fbcRunCompletion(fbc_t* fbc, unsigned long timeout) {
   unsigned long start = millis();
 #define HAS_TIMED_OUT   (timeout == 0 || (start + timeout) >= now)
   while(!fbcRunContinuous(fbc) && HAS_TIMED_OUT)
-    taskDelayUntil(&now, LOOP_INTERVAL);
+    taskDelayUntil(&now, FBC_LOOP_INTERVAL);
   return HAS_TIMED_OUT;
 #undef HAS_TIMED_OUT
 }

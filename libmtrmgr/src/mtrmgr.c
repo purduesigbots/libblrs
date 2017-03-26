@@ -48,14 +48,26 @@ static void _motorManagerTask(void *none)
                 int commanded = motor[i].cmd;
                 float slew = motor[i].slewrate;
                 int out = 0;
-								// If slew is less than required delta-PWM, set commanded to output
-                if (abs(commanded - current) < (slew * (millis() - motor[i]._lastUpdate)))
-                    out = commanded;
-								// Basic Idea: if we are speeding up too fast the wheels might slip so we need to control accel.
-                else
-                    out = (current + (int)(slew * (millis() - motor[i]._lastUpdate) * (commanded - current > 0 ? 1 : -1)));
-								// Recalculates if truespeed is desired
-                out = motor[i].recalculate(out);
+
+                if (slew == 0) //setting a slew rate of zero prevents output
+                  continue;
+
+                if (commanded != current) {
+                  //Slewing
+                  if (commanded > current) {
+                    out = current + (int)(slew * (millis() - motor[i]._lastUpdate)); //extrapolate largest allowable acceleration
+                    if (out > commanded) //requested change in output is lower than maximum possible
+                      out = commanded;
+                  }
+                  else if (commanded < current) {
+                    out = current - (int)(slew * (millis() - motor[i]._lastUpdate)); //extrapolate largest allowable acceleration
+                    if (out < commanded) //requested change in output is lower than maximum possible
+                      out = commanded;
+                  }
+
+                  out = motor[i].recalculate(out);
+                }
+
                 // Grab mutex if possible, if it's not available (being changed by MotorSet()), skip the motor check.
                 if (!mutexTake(mutex[i], 5))
                     continue;
