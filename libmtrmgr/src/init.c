@@ -1,7 +1,7 @@
 /** @file init.c
- * @brief File for initialization code
  *
- * This file should contain the user initialize() function and any functions related to it.
+ * ========= DEMO CODE =========
+ * This file contains example code from the clawbot tutorial using BLRS's mtrmgr
  *
  * Any copyright is dedicated to the Public Domain.
  * http://creativecommons.org/publicdomain/zero/1.0/
@@ -37,4 +37,9 @@ void initializeIO() {
  * can be implemented in this task if desired.
  */
 void initialize() {
+  motorManagerInit();
+
+  chassisInit();
+  liftInit();
+  clawInit();
 }

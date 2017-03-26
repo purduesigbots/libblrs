@@ -20,6 +20,8 @@
 
 #define MUTEX_TAKE_TIMEOUT 100
 
+#define DEFAULT_SLEW_RATE 0.75
+
 /*
 * This defines a "Motor" and all of its corresponding information.
 * Most of this information is only used internally within SML.
@@ -31,7 +33,6 @@ typedef struct {
   unsigned long _lastUpdate;  // time (msec) of last commanded value
   float slewrate;             // caps the motor's acceleration
   char inverted;              // flips the motor output to avoid electrically flipping motors
-  bool immediate;             // bypasses the slewrate and immediately sets to desired motor power
   int(*recalculate)(int);     // used to scale the motor output for trueSpeed or other scalings
 } Motor;
 
@@ -72,7 +73,8 @@ void blrsMotorInit(int port, bool inverted, float slew, int (*recalculate)(int))
  *        The PWM value of the motor to set it to. Will be checked and forced back into the bounds [-127,127]
  *
  * @param immediate
- *        Will change the speed of the motor immediately, bypassing the motor manager ramping if set to true.
+ *        Will change the speed of the motor immediately, bypassing the motor manager ramping and
+ *        recalculation if set to true.
  *
  * @returns Returns true if MotorSet was successful.
  */
