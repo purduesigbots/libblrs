@@ -31,6 +31,16 @@ clean:
 	-rm -f $(OUT)
 	-rm -rf $(BINDIR)
 
+library: clean $(BINDIR) $(SUBDIRS) $(ASMOBJ) $(COBJ) $(CPPOBJ)
+    -rm -f $(BINDIR)/opcontrol.o $(BINDIR)/init.o $(BINDIR)/auto.o
+    $(MCUPREFIX)ar rvs $(BINDIR)/$(LIBNAME).a $(BINDIR)/*.o
+    -mkdir -p $(TEMPLATE) $(TEMPLATE)/include $(TEMPLATE)/firmware
+    cp $(ROOT)/include/*.h $(TEMPLATE)/include
+    cp $(BINDIR)/$(LIBNAME).a $(TEMPLATE)/firmware/$(LIBNAME).a
+    -rm -f $(TEMPLATE)/include/API.h $(TEMPLATE)/include/main.h
+    pros conduct create-template $(LIBNAME) $(VERSION) $(DEPOT) --location $(TEMPLATE) --ignore project.pros --upgrade-files "firmware/$(LIBNAME).a include/*.h"
+    @echo Need to zip $(TEMPLATE)
+
 # Uploads program to device
 upload: all
 	$(UPLOAD)
