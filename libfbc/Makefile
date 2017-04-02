@@ -8,6 +8,9 @@ BINDIR=$(ROOT)/bin
 SUBDIRS=src
 
 # Nothing below here needs to be modified by typical users
+LIBNAME=libfbc
+VERSION=1.0.0
+DEPOT=blrslib
 
 # Include common aspects of this project
 -include $(ROOT)/common.mk
