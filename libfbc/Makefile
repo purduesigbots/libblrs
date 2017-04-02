@@ -12,6 +12,8 @@ LIBNAME=libfbc
 VERSION=1.0.0
 DEPOT=blrslib
 
+TEMPLATE=$(ROOT)/$(LIBNAME)-template
+
 # Include common aspects of this project
 -include $(ROOT)/common.mk
 
