@@ -52,10 +52,10 @@ void motorManagerStop();
  * @param channel
  *        The port of the motor [1,10]
  *
- * @param invertedf
+ * @param inverted
  *        If the motor port is inverted, then set to true (127 will become -127 and vice versa)
  *
- * @param slewa
+ * @param slew
  *        The acceleration of the motor in dPWM/millisecond. DEFAULT_SLEW_RATE is available, which sets dPWM/millisecond to 0.75
  *
  * @param recalculate
