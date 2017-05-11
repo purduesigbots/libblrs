@@ -10,8 +10,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#ifndef _FFBC_PID_H_
-#define _FFBC_PID_H_
+#ifndef _FBC_PID_H_
+#define _FBC_PID_H_
 
 #include "fbc.h"
 
