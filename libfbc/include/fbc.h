@@ -55,31 +55,32 @@
    int _prevSense;
  } fbc_t;
 
- /**
-  * @brief Initializes a barebones feedback controller without the actual controller. Use an auxiliary function
-  *        or manually set up the controller to actually execute it.
-  *
-  * @param fbc
-  *        A pointer to a feedback controller
-  * @param move
-  *        A pointer to a function to set the motors/output of the system
-  * @param sense
-  *        A pointer to a function which retrieves sensor input
-  * @param resetSense
-  *        An optional pointer to a function which resets the sensor to a default value.
-  *        If NULL, then nothing is done
-  * @param neg_deadband
-  *        the minimum output in the negative direction for the controller. Zero negates this effect.
-  * @param pos_deadband
-  *        the minimum output in the positive direction for the controller. Zero negates this effect.
-  * @param acceptableTolerance
-  *        Maximum delta between the current sensor value and the goal sensor value to be considered on target
-  *        for a given time slice
-  * @param acceptableConfidence
-  *        Minimum number of contiguous time slices that need to be on target to consider the system stably
-  *        on target.
-  */
- void fbcInit(fbc_t* fbc, void (*move)(int), int (*sense)(void), void (*resetSense)(void),
+/**
+ * @brief Initializes a barebones feedback controller without the actual controller. Use an auxiliary function
+ *        or manually set up the controller to actually execute it.
+ *
+ * @param fbc
+ *        A pointer to a feedback controller
+ * @param move
+ *        A pointer to a function to set the motors/output of the system
+ * @param sense
+ *        A pointer to a function which retrieves sensor input
+ * @param resetSense
+ *        An optional pointer to a function which resets the sensor to a default value.
+ *        If NULL, then nothing is done
+ * @param computeError
+ *        A pointer to a function which determines the error to provide to the compute function.
+ *        This library provides fbcPosErr and fbcVelErr to compute standard position and velocity
+ *        errors. See their respective documentation for more information.
+ *        If NULL, then fbcPosErr is used
+ * @param acceptableTolerance
+ *        Maximum delta between the current sensor value and the goal sensor value to be considered on target
+ *        for a given time slice
+ * @param acceptableConfidence
+ *        Minimum number of contiguous time slices that need to be on target to consider the system stably
+ *        on target.
+ */
+void fbcInit(fbc_t* fbc, void (*move)(int), int (*sense)(void), void (*resetSense)(void),
              int neg_deadband, int pos_deadband, int acceptableTolerance, unsigned int acceptableConfidence);
 
 /**
@@ -126,6 +127,11 @@ bool fbcRunCompletion(fbc_t* fbc, unsigned long int timeout);
  * @note Use the PROS task management tools to pause/resume execution of this task
  */
 TaskHandle fbcRunParallel(fbc_t* fbc);
+
+/**
+ * @brief Generates the output for the feedback controller but does not actually set the output (as opposed to fbcRunContinuous)
+ */
+int fbcGenerateOutput(fbc_t * fbc);
 
 
 // Helper macros for implementations of fbc

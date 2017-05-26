@@ -52,25 +52,8 @@ bool fbcIsConfident(fbc_t* fbc) {
   return fbc->_confidence >= fbc->acceptableConfidence;
 }
 
-bool fbcRunContinuous(fbc_t* fbc) {
-  int error = fbc->goal - fbc->sense();
-  int out = fbc->compute(fbc, error);
-  if (out < fbc->pos_deadband && out > 0)
-    out = fbc->pos_deadband;
-  else if (out > fbc->neg_deadband && out < 0)
-    out = fbc->neg_deadband;
-	fbc->move(out);
-
-  if((unsigned int)abs(error) < fbc->acceptableTolerance)
-    fbc->_confidence++;
-  else
-    fbc->_confidence = 0;
-	fbc->_prevExecution = CUR_TIME();
-  return fbc->_confidence >= fbc->acceptableConfidence;
-}
-
 bool fbcRunCompletion(fbc_t* fbc, unsigned long timeout) {
-  unsigned long int now = CUR_TIME();
+  unsigned long now = millis();
   unsigned long start = millis();
 #define HAS_TIMED_OUT   (timeout == 0 || (start + timeout) >= now)
   while(!fbcRunContinuous(fbc) && HAS_TIMED_OUT)
@@ -81,4 +64,25 @@ bool fbcRunCompletion(fbc_t* fbc, unsigned long timeout) {
 
 TaskHandle fbcRunParallel(fbc_t* fbc) {
   return taskCreate(_fbcTask, TASK_DEFAULT_STACK_SIZE, fbc, TASK_PRIORITY_DEFAULT);
+}
+
+int fbcGenerateOutput(fbc_t * fbc) {
+  int error = fbc->goal - fbc->sense();
+  int out = fbc->compute(fbc, error);
+  if (out < fbc->pos_deadband && out > 0)
+    out = fbc->pos_deadband;
+  else if (out > fbc->neg_deadband && out < 0)
+    out = fbc->neg_deadband;
+
+  if((unsigned int)abs(error) < fbc->acceptableTolerance)
+    fbc->_confidence++;
+  else
+    fbc->_confidence = 0;
+	fbc->_prevExecution = CUR_TIME();
+  return out;
+}
+
+bool fbcRunContinuous(fbc_t * fbc) {
+  fbc->move(fbcGenerateOutput(fbc));
+  return fbc->_confidence >= fbc->acceptableConfidence;
 }
