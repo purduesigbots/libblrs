@@ -21,11 +21,39 @@ static void _fbcTask(void* param) {
   }
 }
 
+static int _prev = 0, _count = 0;
+static bool _defaultStall(fbc_t* fbc) {
+  const int min_stuck = fbc->acceptableTolerance;
+  const int min_count = fbc->acceptableConfidence;
+  int delta = abs(fbc->sense() - _prev);
+
+  if (fbc->output == fbc->neg_deadband || fbc->output == fbc->pos_deadband) {
+    _count = 0;
+    return false;
+  }
+  if (delta < min_stuck)
+    _count++;
+  else
+    _count = 0;
+
+  bool stall = _count > min_count;
+  if (stall) {
+    _count = 0;
+    _prev = 0;
+  }
+  return stall;
+}
+
 void fbcInit(fbc_t* fbc, void (*move)(int), int (*sense)(void), void (*resetSense)(void),
-            int neg_deadband, int pos_deadband, int acceptableTolerance, unsigned int acceptableConfidence) {
+             bool (*stall)(fbc_t*), int neg_deadband, int pos_deadband, int acceptableTolerance,
+             unsigned int acceptableConfidence) {
   fbc->move = move;
   fbc->sense = sense;
   fbc->resetSense = resetSense;
+  if (stall == NULL)
+    fbc->stall = _defaultStall;
+  else
+    fbc->stall = stall;
   fbc->acceptableTolerance = acceptableTolerance;
   fbc->acceptableConfidence = acceptableConfidence;
   fbc->neg_deadband = neg_deadband;
@@ -48,8 +76,10 @@ bool fbcSetGoal(fbc_t* fbc, int new_goal) {
   return true;
 }
 
-bool fbcIsConfident(fbc_t* fbc) {
-  return fbc->_confidence >= fbc->acceptableConfidence;
+int fbcIsConfident(fbc_t* fbc) {
+  int out = fbc->_confidence >= fbc->acceptableConfidence;
+  if (fbc->stall(fbc)) out = FBC_STALL;
+  return out;
 }
 
 bool fbcRunCompletion(fbc_t* fbc, unsigned long timeout) {
@@ -82,7 +112,7 @@ int fbcGenerateOutput(fbc_t * fbc) {
   return out;
 }
 
-bool fbcRunContinuous(fbc_t * fbc) {
+int fbcRunContinuous(fbc_t * fbc) {
   fbc->move(fbcGenerateOutput(fbc));
-  return fbc->_confidence >= fbc->acceptableConfidence;
+  return fbcIsConfident(fbc);
 }
