@@ -16,6 +16,8 @@
  #include <API.H>
  #define FBC_LOOP_INTERVAL 20
 
+ #define FBC_STALL -1
+
  typedef struct fbc fbc_t; // predefine fbc_t for use inside fbc_t
  /**
   * The classical error-based closed-loop feedback controller is implemented in by fbc functions.
@@ -39,6 +41,8 @@
    void (*resetSense)(void);
    // A function pointer to reset the state of the controller
    void (*resetController)(fbc_t*);
+   // A function pointer to detect stall conditions
+   bool (*stall)(fbc_t*);
 
    int goal, output;
    int pos_deadband, neg_deadband;
@@ -68,6 +72,7 @@
  * @param resetSense
  *        An optional pointer to a function which resets the sensor to a default value.
  *        If NULL, then nothing is done
+ * TODO: update
  * @param computeError
  *        A pointer to a function which determines the error to provide to the compute function.
  *        This library provides fbcPosErr and fbcVelErr to compute standard position and velocity
@@ -81,7 +86,8 @@
  *        on target.
  */
 void fbcInit(fbc_t* fbc, void (*move)(int), int (*sense)(void), void (*resetSense)(void),
-             int neg_deadband, int pos_deadband, int acceptableTolerance, unsigned int acceptableConfidence);
+             bool (*stall)(fbc_t*), int neg_deadband, int pos_deadband, int acceptableTolerance,
+             unsigned int acceptableConfidence);
 
 /**
  * @brief Resets the feedback controller's goal, sensor state, and accumulating parameters, if applicable.
@@ -95,18 +101,20 @@ void fbcReset(fbc_t* fbc);
 bool fbcSetGoal(fbc_t* fbc, int new_goal);
 
 /**
+ * TODO: update
  * @brief Reports true if the feedback controller is stably on target
  */
-bool fbcIsConfident(fbc_t* fbc);
+int fbcIsConfident(fbc_t* fbc);
 
 /**
  * @brief Runs one iteration of the feedback controller. This function is typically used when multiple
  *        controllers want to be run simulatenously on a single task.
  *
- * @returns A boolean which indicates that the controller is stably on target as determined by the usage
+ * TODO: Update
+ * @returns An integer which indicates that the controller is stably on target as determined by the usage
  *          of acceptTolerance and acceptConfidence.
  */
-bool fbcRunContinuous(fbc_t* fbc);
+int fbcRunContinuous(fbc_t* fbc);
 
 /**
  * @brief Runs the feedback controller in this task until it is stably on target.
