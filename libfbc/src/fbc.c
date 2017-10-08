@@ -21,11 +21,13 @@ static void _fbcTask(void* param) {
   }
 }
 
-static int _prev = 0, _count = 0;
-static bool _defaultStall(fbc_t* fbc) {
-  const int min_stuck = fbc->acceptableTolerance;
-  const int min_count = fbc->acceptableConfidence;
-  int delta = abs(fbc->sense() - _prev);
+static int _prev = 0;
+static unsigned int _count = 0;
+bool fbcStallDetect(fbc_t* fbc) {
+  unsigned int min_stuck = fbc->acceptableTolerance >> 3;
+  if (min_stuck < 1) min_stuck = 1;
+  unsigned int min_count = fbc->acceptableConfidence;
+  unsigned int delta = abs(fbc->sense() - _prev);
 
   if (fbc->output == fbc->neg_deadband || fbc->output == fbc->pos_deadband) {
     _count = 0;
@@ -36,6 +38,8 @@ static bool _defaultStall(fbc_t* fbc) {
   else
     _count = 0;
 
+  _prev = fbc->sense();
+
   bool stall = _count > min_count;
   if (stall) {
     _count = 0;
@@ -45,20 +49,18 @@ static bool _defaultStall(fbc_t* fbc) {
 }
 
 void fbcInit(fbc_t* fbc, void (*move)(int), int (*sense)(void), void (*resetSense)(void),
-             bool (*stall)(fbc_t*), int neg_deadband, int pos_deadband, int acceptableTolerance,
+             bool (*stallDetect)(fbc_t*), int neg_deadband, int pos_deadband, int acceptableTolerance,
              unsigned int acceptableConfidence) {
   fbc->move = move;
   fbc->sense = sense;
   fbc->resetSense = resetSense;
-  if (stall == NULL)
-    fbc->stall = _defaultStall;
-  else
-    fbc->stall = stall;
+  fbc->stallDetect = stallDetect;
   fbc->acceptableTolerance = acceptableTolerance;
   fbc->acceptableConfidence = acceptableConfidence;
   fbc->neg_deadband = neg_deadband;
   fbc->pos_deadband = pos_deadband;
-  fbc->goal = 0;
+  fbc->resetController = NULL;
+  fbcReset(fbc);
 }
 
 void fbcReset(fbc_t* fbc) {
@@ -78,7 +80,7 @@ bool fbcSetGoal(fbc_t* fbc, int new_goal) {
 
 int fbcIsConfident(fbc_t* fbc) {
   int out = fbc->_confidence >= fbc->acceptableConfidence;
-  if (fbc->stall(fbc)) out = FBC_STALL;
+  if (fbc->stallDetect != NULL && fbc->stallDetect(fbc)) out = FBC_STALL;
   return out;
 }
 
