@@ -13,7 +13,7 @@
 #ifndef _FBC_H_
 #define _FBC_H_
 
-#include <API.H>
+#include <API.h>
 #define FBC_LOOP_INTERVAL 20
 
 /**
