@@ -44,7 +44,7 @@ static void _motorManagerTask(void *none)
 					  // the motorGet function gets a motor between channels 1-10. motor[index] goes from 0-9
             if (motorGet(i+1) != motor[i].cmd) // Motor has not been set to target
             {
-                int current = motorGet(i+1);
+                int current = motor[i]._prev;
                 int commanded = motor[i].cmd;
                 float slew = motor[i].slewrate;
                 int out = 0;
@@ -65,6 +65,7 @@ static void _motorManagerTask(void *none)
                       out = commanded;
                   }
 
+                  motor[i]._prev = out;
                   out = motor[i].recalculate(out);
                 }
 
@@ -104,6 +105,7 @@ void blrsMotorInit(int port, bool inverted, float slewrate, int (*recalculate)(i
     else {
       motor[port].recalculate = recalculate;
     }
+    motor[port]._prev = 0;
 }
 
 void motorManagerStop()

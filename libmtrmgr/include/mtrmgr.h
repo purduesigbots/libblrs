@@ -28,12 +28,13 @@
 */
 typedef struct {
   unsigned char port;         // port number of given motor
-  int pwm;                    // current pwm value
   int cmd;                    // commanded pwm value
-  unsigned long _lastUpdate;  // time (msec) of last commanded value
   float slewrate;             // caps the motor's acceleration
   char inverted;              // flips the motor output to avoid electrically flipping motors
   int(*recalculate)(int);     // used to scale the motor output for trueSpeed or other scalings
+
+  unsigned long _lastUpdate;  // time (msec) of last commanded value
+  int _prev;                  // past commanded value
 } Motor;
 
 /**
