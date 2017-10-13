@@ -22,8 +22,7 @@ bool buttonPressed[27];
 /**
  * @brief Initializes the buttons array.
  */
-void buttonInit()
-{
+void buttonInit() {
 	for (int i = 0; i <= 27; i++)
 		buttonPressed[i] = false;
 }
@@ -33,28 +32,27 @@ bool buttonGetState(button_t button) {
 
 	// Determine how to get the current button value (from what function) and where it
 	// is, then get it.
-	if (button < LCD_LEFT) // button is a joystick button
-	{
+	if (button < LCD_LEFT) {
+		// button is a joystick button
 		unsigned char joystick;
 		unsigned char buttonGroup;
 		unsigned char buttonLocation;
 
 		button_t newButton;
-		if (button <= 11)
-		{ // button is on joystick 1
+		if (button <= 11) {
+			// button is on joystick 1
 			joystick = 1;
 			newButton = button;
 		}
-		else
-		{ // button is on joystick 2
+		else {
+			// button is on joystick 2
 			joystick = 2;
 			// shift button down to joystick 1 buttons in order to
 			// detect which button on joystick is queried
 			newButton = (button_t)(button - 12);
 		}
 
-		switch (newButton)
-		{
+		switch (newButton) {
 		case 0:
 			buttonGroup = 5;
 			buttonLocation = JOY_DOWN;
@@ -108,8 +106,8 @@ bool buttonGetState(button_t button) {
 		}
 		currentButton = joystickGetDigital(joystick, buttonGroup, buttonLocation);
 	}
-	else // button is on LCD
-	{
+	else {
+		// button is on LCD
 		if (button == LCD_LEFT)
 			currentButton = (lcdReadButtons(uart1) == LCD_BTN_LEFT);
 
@@ -139,15 +137,14 @@ bool buttonGetState(button_t button) {
  *		...
  * @endcode
  */
-bool buttonIsNewPress(button_t button)
-{
+bool buttonIsNewPress(button_t button) {
 	bool currentButton = buttonGetState(button);
 
 	if (!currentButton) // buttons is not currently pressed
 		buttonPressed[button] = false;
 
-	if (currentButton && !buttonPressed[button])
-	{ // button is currently pressed and was not detected as being pressed during last check
+	if (currentButton && !buttonPressed[button]) {
+		// button is currently pressed and was not detected as being pressed during last check
 		buttonPressed[button] = true;
 		return true;
 	}

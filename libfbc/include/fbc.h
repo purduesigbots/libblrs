@@ -1,5 +1,5 @@
 /**
- * @file Team BLRS Feedback Controller Library (FBCL)
+ * @file Team BLRS Feedback Controller Library (FBC Library)
  * @brief Provides components to implement error-based feedback controllers
   *       with pre-made templates for PID, TBH, and MS-PID
  *
