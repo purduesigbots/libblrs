@@ -32,7 +32,6 @@ static int _defaultRecalculate(int in) {
  *        This task is initialized by the InitializeMotorManager method.
  *				Do not manually create this task.
  */
-
 static void _motorManagerTask(void *none) {
 	unsigned long int now;
 	while (true) {
