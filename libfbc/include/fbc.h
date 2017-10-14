@@ -1,5 +1,5 @@
 /**
- * @file Team BLRS Feedback Controller Library (FBCL)
+ * @file Team BLRS Feedback Controller Library (FBC Library)
  * @brief Provides components to implement error-based feedback controllers
   *       with pre-made templates for PID, TBH, and MS-PID
  *
@@ -10,15 +10,18 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
- #ifndef _FBC_H_
- #define _FBC_H_
+#ifndef _FBC_H_
+#define _FBC_H_
 
- #include <API.H>
- #define FBC_LOOP_INTERVAL 20
+#include <API.h>
+#define FBC_LOOP_INTERVAL 20
 
- #define FBC_STALL -1
+/**
+ * The error code returned by fbcIsConfident() and fbcRunContinuous when the robot stalls
+ */
+#define FBC_STALL -1
 
- typedef struct fbc fbc_t; // predefine fbc_t for use inside fbc_t
+typedef struct fbc fbc_t; // predefine fbc_t for use inside fbc_t
  /**
   * The classical error-based closed-loop feedback controller is implemented in by fbc functions.
   * For simplicity and convenience, some naming conventions have been adopted to lower the learning curve.
@@ -42,7 +45,8 @@
    // A function pointer to reset the state of the controller
    void (*resetController)(fbc_t*);
    // A function pointer to detect stall conditions
-   bool (*stall)(fbc_t*);
+   // fbcStallDetect is available as a sample stall detectionn function but you can write your own
+   bool (*stallDetect)(fbc_t*);
 
    int goal, output;
    int pos_deadband, neg_deadband;
@@ -60,6 +64,16 @@
  } fbc_t;
 
 /**
+ * @brief a simple stall detection algorithm
+ *
+ * @param fbc
+ *        A pointer to a feedback controller
+ *
+ * @returns true if the controller is stalled, false otherwise
+ */
+ bool fbcStallDetect(fbc_t* fbc);
+
+/**
  * @brief Initializes a barebones feedback controller without the actual controller. Use an auxiliary function
  *        or manually set up the controller to actually execute it.
  *
@@ -72,12 +86,13 @@
  * @param resetSense
  *        An optional pointer to a function which resets the sensor to a default value.
  *        If NULL, then nothing is done
- * TODO: update
- * @param computeError
- *        A pointer to a function which determines the error to provide to the compute function.
- *        This library provides fbcPosErr and fbcVelErr to compute standard position and velocity
- *        errors. See their respective documentation for more information.
- *        If NULL, then fbcPosErr is used
+ * @param stallDetect
+ *        A pointer to a function that returns true if the controller has stalled
+ *        fbcStallDetect is available as a standard option, or you can write your own
+ * @param neg_deadband
+ *        The lowest possible non-zero output value for the robot to move in the negative direction
+ * @param pos_deadband
+ *        The lowest possible non-zero output value for the robot to move in the positive direction
  * @param acceptableTolerance
  *        Maximum delta between the current sensor value and the goal sensor value to be considered on target
  *        for a given time slice
@@ -86,7 +101,7 @@
  *        on target.
  */
 void fbcInit(fbc_t* fbc, void (*move)(int), int (*sense)(void), void (*resetSense)(void),
-             bool (*stall)(fbc_t*), int neg_deadband, int pos_deadband, int acceptableTolerance,
+             bool (*stallDetect)(fbc_t*), int neg_deadband, int pos_deadband, int acceptableTolerance,
              unsigned int acceptableConfidence);
 
 /**
@@ -97,12 +112,14 @@ void fbcReset(fbc_t* fbc);
 /**
  * @brief Updates the feedback controller's goal. Additionally, will reset the controller as definied in
  *        fbc_reset. If new_goal is not different, then nothing is done.
+ * @returns true if the operation was successful
  */
 bool fbcSetGoal(fbc_t* fbc, int new_goal);
 
 /**
- * TODO: update
- * @brief Reports true if the feedback controller is stably on target
+ * @brief Reports the status of the controller - running, confident, or stalled
+ *
+ * @returns 1 if confident, FBC_STALL (-1) if stalled, and 0 otherwise
  */
 int fbcIsConfident(fbc_t* fbc);
 
@@ -110,9 +127,7 @@ int fbcIsConfident(fbc_t* fbc);
  * @brief Runs one iteration of the feedback controller. This function is typically used when multiple
  *        controllers want to be run simulatenously on a single task.
  *
- * TODO: Update
- * @returns An integer which indicates that the controller is stably on target as determined by the usage
- *          of acceptTolerance and acceptConfidence.
+ * @returns 1 if confident, FBC_STALL (-1) if stalled, and 0 otherwise
  */
 int fbcRunContinuous(fbc_t* fbc);
 
@@ -126,6 +141,8 @@ int fbcRunContinuous(fbc_t* fbc);
  * @note The implementation of this function is to call fbc_run_continuous every 25 milliseconds to completion
  * @note Timeout is only checked once every iteration. This means that if the controller times out, the amount
  *       of time passed may not be timeout milliseconds.
+ *
+ * @returns true if the movement timed out, false otherwise
  */
 bool fbcRunCompletion(fbc_t* fbc, unsigned long int timeout);
 

@@ -1,5 +1,5 @@
 /**
- * @file Team BLRS Feedback Controller Library (FBC)
+ * @file Team BLRS Feedback Controller Library (FBC Library)
  *       > PID Controller Tools
  * @brief Contains algorithms for PID computation and initialization
  *
