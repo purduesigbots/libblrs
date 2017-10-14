@@ -1,5 +1,5 @@
 LIBNAME=libfbc
-VERSION=1.1.0
+VERSION=1.0.0
 
 # extra files (like header files)
 TEMPLATEFILES = include/fbc_pid.h include/fbc.h
