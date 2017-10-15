@@ -1,5 +1,5 @@
 LIBNAME=libmtrmgr
-VERSION=1.0.0
+VERSION=`cat ../version`
 
 # extra files (like header files)
 TEMPLATEFILES = include/mtrmgr.h
@@ -16,4 +16,5 @@ library: clean $(BINDIR) $(SUBDIRS) $(ASMOBJ) $(COBJ) $(CPPOBJ)
 	cp $(BINDIR)/$(LIBNAME).a $(TEMPLATE)/firmware/$(LIBNAME).a
 	$(foreach f,$(TEMPLATEFILES),cp $(f) $(TEMPLATE)/$(f);)
 	pros conduct create-template $(LIBNAME) $(VERSION) $(TEMPLATE) --ignore template.pros --upgrade-files "firmware/$(LIBNAME).a $(TEMPLATEFILES)"
-	cd $(TEMPLATE) && zip -r ../$(basename $(TEMPLATE)) *
+	@echo Need to zip $(TEMPLATE) without the base directory
+	# cd $(TEMPLATE) && zip -r ../$(basename $(TEMPLATE)) *

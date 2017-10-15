@@ -1,5 +1,4 @@
-libbtns/bin/*
-libfbc/bin/*
-libmtrmgr/bin/*
+*/bin/*
 */*-template/
 *-template.zip
+version
