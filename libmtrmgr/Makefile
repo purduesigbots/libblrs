@@ -14,8 +14,6 @@ DEPOT=blrslib
 
 -include $(ROOT)/template.mk
 
-TEMPLATE=$(ROOT)/$(LIBNAME)-template
-
 # Include common aspects of this project
 -include $(ROOT)/common.mk
 
@@ -37,14 +35,6 @@ all: $(BINDIR) $(OUT)
 clean:
 	-rm -f $(OUT)
 	-rm -rf $(BINDIR)
-
-library: clean $(BINDIR) $(SUBDIRS) $(ASMOBJ) $(COBJ) $(CPPOBJ)
-		$(MCUPREFIX)ar rvs $(BINDIR)/$(LIBNAME).a $(foreach f,$(TEMPLATEOBJS),$(BINDIR)/$(f).o)
-		mkdir -p $(TEMPLATE) $(TEMPLATE)/firmware $(addprefix $(TEMPLATE)/, $(dir $(TEMPLATEFILES)))
-		cp $(BINDIR)/$(LIBNAME).a $(TEMPLATE)/firmware/$(LIBNAME).a
-		$(foreach f,$(TEMPLATEFILES),cp $(f) $(TEMPLATE)/$(f);)
-		pros conduct create-template $(LIBNAME) $(VERSION) $(TEMPLATE) --ignore project.pros --upgrade-files "firmware/$(LIBNAME).a $(TEMPLATEFILES)"
-		@echo Need to zip $(TEMPLATE)
 
 
 # Uploads program to device
