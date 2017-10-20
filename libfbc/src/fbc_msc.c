@@ -27,6 +27,8 @@ void mscInitializeData(msc_t* msc, fbc_t* master, fbc_t* slave, double eq_kP, do
                        int eq_minIntegral, int eq_maxIntegral) {
 	msc->master = master;
 	msc->slave = slave;
+	msc->man_out = 0;
+	msc->manual = false;
 
 	fbc_t* eq = (fbc_t*)malloc(sizeof(fbc_t));
 	fbc_pid_t* pid = (fbc_pid_t*)malloc(sizeof(fbc_pid_t));
@@ -50,15 +52,26 @@ int mscGenerateOutput(msc_t* msc, bool master) {
 	int sense() { return mscSense(msc); }
 	msc->_eq->sense = sense;
 
-	if (master) {
+	if (msc->manual && master) {
+		int master = msc->man_out;
+		master -= fbcGenerateOutput(msc->_eq);
+		return master;
+	}
+	else if (msc->manual && !master) {
+		int slave = msc->man_out;
+		slave += fbcGenerateOutput(msc->_eq);
+		return slave;
+	}
+	else if (!msc->manual && master) {
 		int master = fbcGenerateOutput(msc->master);
 		master -= fbcGenerateOutput(msc->_eq);
 		return master;
 	}
-
-	int slave = fbcGenerateOutput(msc->slave);
-	slave += fbcGenerateOutput(msc->_eq);
-	return slave;
+	else {
+		int slave = fbcGenerateOutput(msc->slave);
+		slave += fbcGenerateOutput(msc->_eq);
+		return slave;
+	}
 }
 
 int mscIsConfident(msc_t* msc) {
