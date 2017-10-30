@@ -1,5 +1,5 @@
 LIBNAME=libmtrmgr
-VERSION=1.0.0
+VERSION=1.0.1
 
 # extra files (like header files)
 TEMPLATEFILES = include/mtrmgr.h
