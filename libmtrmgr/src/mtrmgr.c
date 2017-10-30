@@ -119,6 +119,7 @@ bool blrsMotorSet(int port, int commanded, bool immediate) {
 			return false;
 		}
 		motorSet(port + 1, commanded * motor[port].inverted);
+		motor[port]._prev = commanded * motor[port].inverted;
 		mutexGive(mutex[port]);
 	}
 	motor[port].cmd = commanded * motor[port].inverted;
