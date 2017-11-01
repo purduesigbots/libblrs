@@ -1,5 +1,5 @@
 LIBNAME=libbtns
-VERSION=1.0.0
+VERSION=`cat ../version`
 
 # extra files (like header files)
 TEMPLATEFILES = include/buttons.h
@@ -15,5 +15,6 @@ library: clean $(BINDIR) $(SUBDIRS) $(ASMOBJ) $(COBJ) $(CPPOBJ)
 	mkdir -p $(TEMPLATE) $(TEMPLATE)/firmware $(addprefix $(TEMPLATE)/, $(dir $(TEMPLATEFILES)))
 	cp $(BINDIR)/$(LIBNAME).a $(TEMPLATE)/firmware/$(LIBNAME).a
 	$(foreach f,$(TEMPLATEFILES),cp $(f) $(TEMPLATE)/$(f);)
-	pros conduct create-template $(LIBNAME) $(VERSION) $(TEMPLATE) --ignore project.pros --upgrade-files "firmware/$(LIBNAME).a $(TEMPLATEFILES)"
-	@echo Need to zip $(TEMPLATE)
+	pros conduct create-template $(LIBNAME) $(VERSION) $(TEMPLATE) --ignore template.pros --upgrade-files firmware/$(LIBNAME).a $(foreach f,$(TEMPLATEFILES),--upgrade-files $(f))
+	@echo Need to zip $(TEMPLATE) without the base directory
+	# cd $(TEMPLATE) && zip -r ../$(basename $(TEMPLATE)) *
