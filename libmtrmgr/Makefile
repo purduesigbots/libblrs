@@ -9,7 +9,7 @@ SUBDIRS=src
 
 # Nothing below here needs to be modified by typical users
 LIBNAME=libmtrmgr
-VERSION=1.0.0
+VERSION=1.0.1
 DEPOT=blrslib
 
 -include $(ROOT)/template.mk
