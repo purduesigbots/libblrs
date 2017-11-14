@@ -29,7 +29,7 @@ static bool _fbcStallDetect(fbc_t* fbc) {
 	unsigned int minCount = fbc->acceptableConfidence;
 	unsigned int delta = abs(fbc->sense() - _prev);
 
-	if (fbc->output == fbc->neg_deadband || fbc->output == fbc->pos_deadband) {
+	if (fbc->output == fbc->neg_deadband || fbc->output == fbc->pos_deadband || fbc->output == 0) {
 		_count = 0;
 		return false;
 	}
