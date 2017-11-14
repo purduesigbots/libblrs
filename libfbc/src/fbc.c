@@ -26,7 +26,7 @@ static unsigned int _count = 0;
 static bool _fbcStallDetect(fbc_t* fbc) {
 	unsigned int minStuck = fbc->acceptableTolerance >> 3;
 	if (minStuck < 1) minStuck = 1;
-	unsigned int minCount = fbc->acceptableConfidence;
+	unsigned int countUntilStall = fbc->acceptableConfidence;
 	unsigned int delta = abs(fbc->sense() - _prev);
 
 	if (fbc->output == fbc->neg_deadband || fbc->output == fbc->pos_deadband || fbc->output == 0) {
@@ -41,7 +41,7 @@ static bool _fbcStallDetect(fbc_t* fbc) {
 
 	_prev = fbc->sense();
 
-	bool stall = _count > minCount;
+	bool stall = _count > countUntilStall;
 	if (stall) {
 		_count = 0;
 		_prev = 0;
