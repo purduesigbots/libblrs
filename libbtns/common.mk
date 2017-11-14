@@ -60,7 +60,7 @@ catlog=cat temp.log | sed -e 's/\(error\)/$(ERROR_COLOR)\1$(NO_COLOR)/' -e 's/\(
 define test_output
 $1 2> temp.log || touch temp.errors
 @if test -e temp.errors; then $(ECHO) "$(ERROR_STRING)" && $(catlog); elif test -s temp.log; then $(ECHO) "$(WARN_STRING)" && $(catlog); else $(ECHO) "$2"; fi;
-@if test -e temp.errors; then rm -f temp.log temp.errors && false; elif test -s temp.log; then rm -f temp.log temp.errors && false; fi;
+@if test -e temp.errors; then rm -f temp.log temp.errors && false; fi
 @rm -f temp.log temp.errors
 endef
 

@@ -2,7 +2,8 @@
  * @file buttons.c
  * @author Elliot Berman
  *
- * @details The Buttons API enables press-once to trigger control, allowing button pressed to be made which act like taps.
+ * @details The Buttons API enables press-once to trigger control, allowing button pressed to be made which act like
+ *taps.
  * The API works by holding a boolean "wasPressed" for each button and when buttonIsNewPress() is called,
  * the method compares whether the press is a new press that has not previously been detected. <br>
  * <br>
@@ -30,8 +31,7 @@ void buttonInit() {
 bool buttonGetState(button_t button) {
 	bool currentButton = false;
 
-	// Determine how to get the current button value (from what function) and where it
-	// is, then get it.
+	// Determine how to get the current button value (from what function) and where it is, then get it.
 	if (button < LCD_LEFT) {
 		// button is a joystick button
 		unsigned char joystick;
@@ -148,5 +148,6 @@ bool buttonIsNewPress(button_t button) {
 		buttonPressed[button] = true;
 		return true;
 	}
-	else return false; // button is not pressed or was already detected
+	else
+		return false; // button is not pressed or was already detected
 }
