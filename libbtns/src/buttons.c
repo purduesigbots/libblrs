@@ -23,7 +23,7 @@ bool buttonPressed[27];
  * @brief Initializes the buttons array.
  */
 void buttonInit() {
-	for (int i = 0; i <= 27; i++)
+	for (int i = 0; i < 27; i++)
 		buttonPressed[i] = false;
 }
 
