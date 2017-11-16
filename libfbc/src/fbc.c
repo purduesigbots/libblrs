@@ -113,6 +113,7 @@ int fbcGenerateOutput(fbc_t * fbc) {
 	else
 		fbc->_confidence = 0;
 
+	fbc->_prevSense = fbc->sense();
 	fbc->_prevExecution = CUR_TIME();
 	fbc->output = out;
 	return out;
