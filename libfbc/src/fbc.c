@@ -45,16 +45,15 @@ static bool _fbcStallDetect(fbc_t* fbc) {
 	return stall;
 }
 
+bool (*fbcStallDetect)(fbc_t* fbc) = _fbcStallDetect;
+
 void fbcInit(fbc_t* fbc, void (*move)(int), int (*sense)(void), void (*resetSense)(void),
              bool (*stallDetect)(fbc_t*), int neg_deadband, int pos_deadband, int acceptableTolerance,
              unsigned int acceptableConfidence) {
 	fbc->move = move;
 	fbc->sense = sense;
 	fbc->resetSense = resetSense;
-	if(stallDetect)
-		fbc->stallDetect = stallDetect;
-	else
-		fbc->stallDetect = &_fbcStallDetect;
+	fbc->stallDetect = stallDetect;
 	fbc->acceptableTolerance = acceptableTolerance;
 	fbc->acceptableConfidence = acceptableConfidence;
 	fbc->neg_deadband = neg_deadband;
@@ -80,7 +79,7 @@ bool fbcSetGoal(fbc_t* fbc, int new_goal) {
 
 int fbcIsConfident(fbc_t* fbc) {
 	int out = fbc->_confidence >= fbc->acceptableConfidence;
-	if (fbc->isStalled) out = FBC_STALL;
+	if (fbc->stallDetect != NULL && fbc->isStalled) out = FBC_STALL;
 	return out;
 }
 
@@ -110,7 +109,8 @@ int fbcGenerateOutput(fbc_t * fbc) {
 	else
 		fbc->_confidence = 0;
 
-	fbc->isStalled = fbc->stallDetect(fbc);
+	if(fbc->stallDetect != NULL)
+		fbc->isStalled = fbc->stallDetect(fbc);
 	fbc->_prevSense = fbc->sense();
 	fbc->_prevExecution = CUR_TIME();
 	fbc->output = out;

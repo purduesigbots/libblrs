@@ -66,6 +66,20 @@ typedef struct fbc fbc_t; // predefine fbc_t for use inside fbc_t
  } fbc_t;
 
 /**
+ * @brief a simple stall detection algorithm
+ *
+ * This stall detection algorithm looks for unexpectedly low movement for a given output, indicating that the robot
+ * is experiencing significant enough resistance that it may cause a stall. This function pointer can be given
+ * to the fbcInit function, or you can write your own stall detection function if you prefer.
+ *
+ * @param fbc
+ *        A pointer to a feedback controller
+ *
+ * @returns true if the controller is stalled, false otherwise
+ */
+extern bool (*fbcStallDetect)(fbc_t* fbc);
+
+/**
  * @brief Initializes a barebones feedback controller without the actual controller. Use an auxiliary function
  *        or manually set up the controller to actually execute it.
  *
@@ -80,7 +94,7 @@ typedef struct fbc fbc_t; // predefine fbc_t for use inside fbc_t
  *        If NULL, then nothing is done
  * @param stallDetect
  *        A pointer to a function that returns true if the controller has stalled
- *        if NULL, a default stall detection algorithm is used
+ *        fbcStallDetect is available as a standard option, or you can write your own
  * @param neg_deadband
  *        The lowest possible non-zero output value for the robot to move in the negative direction
  * @param pos_deadband
