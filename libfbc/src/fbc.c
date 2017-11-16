@@ -78,6 +78,7 @@ bool fbcSetGoal(fbc_t* fbc, int new_goal) {
 	if(fbc->goal == new_goal) return true;
 	fbc->goal = new_goal;
 	fbc->_prevExecution = CUR_TIME();
+	fbc->_confidence = 0;
 	return true;
 }
 
