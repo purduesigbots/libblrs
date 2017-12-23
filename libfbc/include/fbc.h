@@ -22,17 +22,17 @@
 #define FBC_STALL -1
 
 typedef struct fbc fbc_t; // predefine fbc_t for use inside fbc_t
-                          /**
-                           * The classical error-based closed-loop feedback controller is implemented in by fbc functions.
-                           * For simplicity and convenience, some naming conventions have been adopted to lower the learning curve.
-                           *
-                           * fbc provides mechanisms to interact with closed loop controllers and implements the basic feedback
-                           * controller plant (move), sensor (sense), and controller (compute) transfer functions. Additionally,
-                           * fbc determines if the system is on target through the use of a acceptTolerance and acceptConfidence.
-                           * acceptTolerance is the maximum error from the current sensor state to the goal state to be considered
-                           * on target. acceptConfidence determines the number of iterations the controller must be contiguously on
-                           * target to be considered stable and on target.
-                           */
+/**
+ * The classical error-based closed-loop feedback controller is implemented in by fbc functions.
+ * For simplicity and convenience, some naming conventions have been adopted to lower the learning curve.
+ *
+ * fbc provides mechanisms to interact with closed loop controllers and implements the basic feedback
+ * controller plant (move), sensor (sense), and controller (compute) transfer functions. Additionally,
+ * fbc determines if the system is on target through the use of a acceptTolerance and acceptConfidence.
+ * acceptTolerance is the maximum error from the current sensor state to the goal state to be considered
+ * on target. acceptConfidence determines the number of iterations the controller must be contiguously on
+ * target to be considered stable and on target.
+ */
 typedef struct fbc {
 	// A function pointer to modify the system in accordance with the output of the controller
 	void (*move)(int);

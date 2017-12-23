@@ -36,5 +36,18 @@ void initializeIO() {
  * will not start. An autonomous mode selection menu like the pre_auton() in other environments
  * can be implemented in this task if desired.
  */
+void exampleScript1() {
+  return;
+}
+
+void exampleScript2() {
+  return;
+}
+
+const char* titles[] = {"Example Script 1", "Example Script 2"};
+void (*scripts[])() = {exampleScript1, exampleScript2};
+
 void initialize() {
+  lcdScriptInit(uart1); // Example LCD is in UART1
+  lcdScriptSelect();
 }

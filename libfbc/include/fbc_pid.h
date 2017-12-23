@@ -39,4 +39,4 @@ void fbcPIDInitializeData(fbc_pid_t* fbc_pid, double kP, double kI, double kD, i
 
 void fbcPIDInit(fbc_t* fbc, fbc_pid_t* config);
 
-#endif /* end of include guard: _FFBC_PID_H_ */
+#endif /* end of include guard: _FBC_PID_H_ */

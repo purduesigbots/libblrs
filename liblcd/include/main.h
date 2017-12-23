@@ -45,6 +45,8 @@
 
 #include <API.h>
 
+#include "lcd.h"
+
 // Allow usage of this file in C++ programs
 #ifdef __cplusplus
 extern "C" {
