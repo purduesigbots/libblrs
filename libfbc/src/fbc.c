@@ -76,13 +76,11 @@ void fbcReset(fbc_t* fbc) {
 }
 
 bool fbcSetGoal(fbc_t* fbc, int new_goal) {
-	if (!fbc)
+  if (!fbc)
 		return false;
-	if (fbc->goal == new_goal)
-		return true;
+	fbcReset(fbc);
 	fbc->goal = new_goal;
 	fbc->_prevExecution = CUR_TIME();
-	fbc->_confidence = 0;
 	return true;
 }
 
