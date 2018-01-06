@@ -22,46 +22,48 @@
 #define FBC_STALL -1
 
 typedef struct fbc fbc_t; // predefine fbc_t for use inside fbc_t
-/**
- * The classical error-based closed-loop feedback controller is implemented in by fbc functions.
- * For simplicity and convenience, some naming conventions have been adopted to lower the learning curve.
- *
- * fbc provides mechanisms to interact with closed loop controllers and implements the basic feedback
- * controller plant (move), sensor (sense), and controller (compute) transfer functions. Additionally,
- * fbc determines if the system is on target through the use of a acceptTolerance and acceptConfidence.
- * acceptTolerance is the maximum error from the current sensor state to the goal state to be considered
- * on target. acceptConfidence determines the number of iterations the controller must be contiguously on
- * target to be considered stable and on target.
- */
-typedef struct fbc {
-	// A function pointer to modify the system in accordance with the output of the controller
-	void (*move)(int);
-	// A function pointer to get the current state of the system (i.e. sensor input)
-	int (*sense)(void);
-	// A function pointer to compute the transfer function of the plant system
-	int (*compute)(fbc_t*, int);
-	// A function pointer to reset the state of the system (may do nothing)
-	void (*resetSense)(void);
-	// A function pointer to reset the state of the controller
-	void (*resetController)(fbc_t*);
-	// A function pointer to detect stall conditions
-	// fbcStallDetect is available as a sample stall detectionn function but you can write your own
-	bool (*stallDetect)(fbc_t*);
+ /**
+  * The classical error-based closed-loop feedback controller is implemented in by fbc functions.
+  * For simplicity and convenience, some naming conventions have been adopted to lower the learning curve.
+  *
+  * fbc provides mechanisms to interact with closed loop controllers and implements the basic feedback
+  * controller plant (move), sensor (sense), and controller (compute) transfer functions. Additionally,
+  * fbc determines if the system is on target through the use of a acceptTolerance and acceptConfidence.
+  * acceptTolerance is the maximum error from the current sensor state to the goal state to be considered
+  * on target. acceptConfidence determines the number of iterations the controller must be contiguously on
+  * target to be considered stable and on target.
+  */
+ typedef struct fbc {
+   // A function pointer to modify the system in accordance with the output of the controller
+   void (*move)(int);
+   // A function pointer to get the current state of the system (i.e. sensor input)
+   int (*sense)(void);
+   // A function pointer to compute the transfer function of the plant system
+   int (*compute)(fbc_t*, int);
+   // A function pointer to reset the state of the system (may do nothing)
+   void (*resetSense)(void);
+   // A function pointer to reset the state of the controller
+   void (*resetController)(fbc_t*);
+   // A function pointer to detect stall conditions
+   // fbcStallDetect is available as a sample stall detectionn function but you can write your own
+   bool (*stallDetect)(fbc_t*);
 
-	int goal, output;
-	int pos_deadband, neg_deadband;
-	unsigned int acceptableConfidence, acceptableTolerance;
-	bool confident;
+   int goal, output;
+   int pos_deadband, neg_deadband;
+   unsigned int acceptableConfidence, acceptableTolerance;
+   bool confident;
+   bool isStalled;
 
-	/*
-	* FOR INTERNAL USE
-	*/
-	void* _controllerData; // Controller data
+   /*
+   * FOR INTERNAL USE
+   */
+   void* _controllerData; // Controller data
 
-	unsigned int _confidence;
-	unsigned long _prevExecution; // most recent time of execution
-	int _prevSense;
-} fbc_t;
+   unsigned int _confidence;
+   unsigned long _prevExecution; // most recent time of execution
+   int _prevSense;
+   unsigned int _stallDetectCount;
+ } fbc_t;
 
 /**
  * @brief a simple stall detection algorithm

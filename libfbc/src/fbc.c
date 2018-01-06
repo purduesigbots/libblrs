@@ -21,31 +21,27 @@ static void _fbcTask(void* param) {
 	}
 }
 
-static int _prev = 0;
-static unsigned int _count = 0;
 static bool _fbcStallDetect(fbc_t* fbc) {
 	unsigned int minStuck = fbc->acceptableTolerance >> 3;
 	if (minStuck < 1)
 		minStuck = 1;
 	unsigned int countUntilStall = fbc->acceptableConfidence;
-	unsigned int delta = abs(fbc->sense() - _prev);
+	unsigned int delta = abs(fbc->sense() - fbc->_prevSense);
 
 	if (fbc->output == fbc->neg_deadband || fbc->output == fbc->pos_deadband || fbc->output == 0) {
-		_count = 0;
+		fbc->_stallDetectCount = 0;
 		return false;
 	}
 
 	if (delta < minStuck)
-		_count++;
+		fbc->_stallDetectCount++;
 	else
-		_count = 0;
+		fbc->_stallDetectCount = 0;
 
-	_prev = fbc->sense();
-
-	bool stall = _count > countUntilStall;
+	bool stall = fbc->_stallDetectCount > countUntilStall;
 	if (stall) {
-		_count = 0;
-		_prev = 0;
+		fbc->_stallDetectCount = 0;
+		fbc->_prevSense = 0;
 	}
 	return stall;
 }
@@ -86,8 +82,8 @@ bool fbcSetGoal(fbc_t* fbc, int new_goal) {
 
 int fbcIsConfident(fbc_t* fbc) {
 	int out = fbc->_confidence >= fbc->acceptableConfidence;
-	if (fbc->stallDetect != NULL && fbc->stallDetect(fbc))
-		out = FBC_STALL;
+	if (fbc->stallDetect != NULL && fbc->isStalled)
+    out = FBC_STALL;
 	return out;
 }
 
@@ -117,6 +113,9 @@ int fbcGenerateOutput(fbc_t* fbc) {
 	else
 		fbc->_confidence = 0;
 
+	if(fbc->stallDetect != NULL)
+		fbc->isStalled = fbc->stallDetect(fbc);
+	fbc->_prevSense = fbc->sense();
 	fbc->_prevExecution = CUR_TIME();
 	fbc->output = out;
 	return out;
