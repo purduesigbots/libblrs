@@ -29,18 +29,18 @@ static bool _fbcStallDetect(fbc_t* fbc) {
 	unsigned int delta = abs(fbc->sense() - fbc->_prevSense);
 
 	if (fbc->output == fbc->neg_deadband || fbc->output == fbc->pos_deadband || fbc->output == 0) {
-		fbc->stallDetectCount = 0;
+		fbc->_stallDetectCount = 0;
 		return false;
 	}
 
 	if (delta < minStuck)
-		fbc->stallDetectCount++;
+		fbc->_stallDetectCount++;
 	else
-		fbc->stallDetectCount = 0;
+		fbc->_stallDetectCount = 0;
 
-	bool stall = fbc->stallDetectCount > countUntilStall;
+	bool stall = fbc->_stallDetectCount > countUntilStall;
 	if (stall) {
-		fbc->stallDetectCount = 0;
+		fbc->_stallDetectCount = 0;
 		fbc->_prevSense = 0;
 	}
 	return stall;
