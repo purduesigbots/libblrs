@@ -15,7 +15,7 @@
 
 #include <API.h>
 
-#define SLEW_DELTA_T 20 //the update rate for the motors in ms
+#define SLEW_DELTA_T 20 // the update rate for the motors in ms
 #define NUM_MOTORS 10
 
 #define MUTEX_TAKE_TIMEOUT 100
@@ -27,14 +27,14 @@
 * Most of this information is only used internally within SML.
 */
 typedef struct {
-  unsigned char port;         // port number of given motor
-  int cmd;                    // commanded pwm value
-  float slewrate;             // caps the motor's acceleration
-  char inverted;              // flips the motor output to avoid electrically flipping motors
-  int(*recalculate)(int);     // used to scale the motor output for trueSpeed or other scalings
+	unsigned char port;      // port number of given motor
+	int cmd;                 // commanded pwm value
+	float slewrate;          // caps the motor's acceleration
+	char inverted;           // flips the motor output to avoid electrically flipping motors
+	int (*recalculate)(int); // used to scale the motor output for trueSpeed or other scalings
 
-  unsigned long _lastUpdate;  // time (msec) of last commanded value
-  int _prev;                  // past commanded value
+	unsigned long _lastUpdate; // time (msec) of last commanded value
+	int _prev;                 // past commanded value
 } Motor;
 
 /**

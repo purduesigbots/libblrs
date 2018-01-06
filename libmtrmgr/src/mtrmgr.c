@@ -13,7 +13,6 @@ static Motor motor[10];
 static Mutex mutex[10];
 static TaskHandle motorManagerTaskHandle;
 
-
 /**
  * @brief The default recalculate function for RecalculateCommanded (takes input and returns it)
  *        This method is only accessible to this file for organizational purposes and may be opened to other files.
@@ -25,38 +24,39 @@ static int _defaultRecalculate(int in) {
 	return in;
 }
 
-
 /**
  * @brief The motor manager task processes all the motors and determines if a change
  * 				needs to be made to the motor speed and executes the change if necessary
  *        This task is initialized by the InitializeMotorManager method.
  *				Do not manually create this task.
  */
-static void _motorManagerTask(void *none) {
+static void _motorManagerTask(void* none) {
 	unsigned long int now;
 	while (true) {
 		now = millis();
 		for (int i = 0; i < NUM_MOTORS; i++) {
 			// the motorGet function gets a motor between channels 1-10. motor[index] goes from 0-9
-			if (motorGet(i+1) != motor[i].cmd) {
+			if (motorGet(i + 1) != motor[i].cmd) {
 				// Motor has not been set to target
 				int current = motor[i]._prev;
 				int commanded = motor[i].cmd;
 				float slew = motor[i].slewrate;
 				int out = 0;
 
-				if (slew == 0) //setting a slew rate of zero prevents output
+				if (slew == 0) // setting a slew rate of zero prevents output
 					continue;
 				if (commanded != current) {
-					//Slewing
+					// Slewing
 					if (commanded > current) {
-						out = current + (int)(slew * (millis() - motor[i]._lastUpdate)); //extrapolate largest allowable acceleration
-						if (out > commanded) //requested change in output is lower than maximum possible
+						out =
+						    current + (int)(slew * (millis() - motor[i]._lastUpdate)); // extrapolate largest allowable acceleration
+						if (out > commanded) // requested change in output is lower than maximum possible
 							out = commanded;
 					}
 					else if (commanded < current) {
-						out = current - (int)(slew * (millis() - motor[i]._lastUpdate)); //extrapolate largest allowable acceleration
-						if (out < commanded) //requested change in output is lower than maximum possible
+						out =
+						    current - (int)(slew * (millis() - motor[i]._lastUpdate)); // extrapolate largest allowable acceleration
+						if (out < commanded) // requested change in output is lower than maximum possible
 							out = commanded;
 					}
 
@@ -67,7 +67,7 @@ static void _motorManagerTask(void *none) {
 				// Grab mutex if possible, if it's not available (being changed by MotorSet()), skip the motor check.
 				if (!mutexTake(mutex[i], 5))
 					continue;
-				motorSet(i+1, out);
+				motorSet(i + 1, out);
 				mutexGive(mutex[i]);
 			}
 			motor[i]._lastUpdate = millis();
@@ -81,7 +81,7 @@ void motorManagerInit() {
 		mutex[i] = mutexCreate();
 		motor[i].recalculate = &_defaultRecalculate;
 	}
-	motorManagerTaskHandle = taskCreate(_motorManagerTask, TASK_DEFAULT_STACK_SIZE, NULL, TASK_PRIORITY_HIGHEST-1);
+	motorManagerTaskHandle = taskCreate(_motorManagerTask, TASK_DEFAULT_STACK_SIZE, NULL, TASK_PRIORITY_HIGHEST - 1);
 }
 
 void blrsMotorInit(int port, bool inverted, float slewrate, int (*recalculate)(int)) {
@@ -91,7 +91,7 @@ void blrsMotorInit(int port, bool inverted, float slewrate, int (*recalculate)(i
 	motor[port].port = port + 1;
 	motor[port].inverted = inverted ? -1 : 1;
 	motor[port].slewrate = slewrate;
-	if(!recalculate) {
+	if (!recalculate) {
 		motor[port].recalculate = &_defaultRecalculate;
 	}
 	else {

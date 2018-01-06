@@ -14,9 +14,9 @@
 #include "ports.h"
 
 void liftSet(int speed) {
-  blrsMotorSet(LIFT_MOTOR, speed, false);
+	blrsMotorSet(LIFT_MOTOR, speed, false);
 }
 
 void liftInit() {
-  blrsMotorInit(LIFT_MOTOR, false, DEFAULT_SLEW_RATE, NULL);
+	blrsMotorInit(LIFT_MOTOR, false, DEFAULT_SLEW_RATE, NULL);
 }

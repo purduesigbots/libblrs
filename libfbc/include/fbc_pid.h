@@ -20,25 +20,23 @@
  * include the various constants necessary
  */
 typedef struct fbc_pid {
-  // The proprtional constant
-  double kP;
-  // The integral constant
-  double kI;
-  // The derivative constant
-  double kD;
-  // Minimum value the integral can take. This limits the effect of the integral
-  int minI;
-  // Maximum value the integral can take.
-  int maxI;
-  //**INTERNAL USE**
-  long _integral;
-  int  _prevError;
+	// The proprtional constant
+	double kP;
+	// The integral constant
+	double kI;
+	// The derivative constant
+	double kD;
+	// Minimum value the integral can take. This limits the effect of the integral
+	int minI;
+	// Maximum value the integral can take.
+	int maxI;
+	//**INTERNAL USE**
+	long _integral;
+	int _prevError;
 } fbc_pid_t;
 
-void fbcPIDInitializeData(fbc_pid_t* fbc_pid, double kP, double kI, double kD,
-  int minIntegral, int maxIntegral);
+void fbcPIDInitializeData(fbc_pid_t* fbc_pid, double kP, double kI, double kD, int minIntegral, int maxIntegral);
 
 void fbcPIDInit(fbc_t* fbc, fbc_pid_t* config);
 
-
-#endif /* end of include guard: _FFBC_PID_H_ */
+#endif /* end of include guard: _FBC_PID_H_ */
