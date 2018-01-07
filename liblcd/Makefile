@@ -9,14 +9,14 @@ EXTRA_CFLAGS=
 EXTRA_CXXFLAGS=$(EXTRA_CFLAGS)
 
 # If this project builds a library, you'll want to edit these options
-LIBNAME=
-LIBVERSION=
+LIBNAME=liblcd
+LIBVERSION=1.1.0
 # space separated list of extra files that get copied to every project
 # to include include/a.h, write LIBFILES=include/a.h
-LIBFILES=
+LIBFILES=include/lcd.h
 # space separated list of files to include in the library's archive
 # to include src/a.c and src/dir/b.c, write LIBSRC=a.c dir/b.c
-LIBSRC=
+LIBSRC=lcd
 
 # Uncomment the next line to make the default rule to build the library
 #.DEFAULT_GOAL=library

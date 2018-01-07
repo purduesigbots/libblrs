@@ -1,5 +1,5 @@
 LIBNAME=liblcd
-VERSION=`cat ../version`
+VERSION=1.1.0
 
 # extra files (like header files)
 TEMPLATEFILES = include/lcd.h
