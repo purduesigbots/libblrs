@@ -165,7 +165,7 @@ TaskHandle fbcRunParallel(fbc_t* fbc);
 int fbcGenerateOutput(fbc_t* fbc);
 
 // Helper macros for implementations of fbc
-// time is all done in microseconds
-#define CUR_TIME micros
-#define TIME_TO_SEC(t) ((t) / 1000000)
+// time is all done in milliseconds
+#define CUR_TIME millis
+#define TIME_TO_SEC(t) ((t) / 1000)
 #endif /* end of include guard: _FBC_H_ */
