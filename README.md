@@ -10,9 +10,9 @@ A full description of its features can be found in its header file, "buttons.h"
 ### libfbc: Feedback Controller Library
 This library contains abstracted feedback controllers, making it easier to use PID, TBH, and other control algorithms.
 
-PID is currently the only algorithm supported in this library (fbc_pid).
+PID and a modified sort of Bang-Bang control (best used for simple systems with low inertia) are currently available as control algorithms.
 
-Similarly, a full description of its features can be found in its header files, "fbc.h" and "fbc_pid.h"
+Similarly, a full description of its features can be found in its header files, "fbc.h", "fbc_bangbang.h" and "fbc_pid.h"
 
 ### liblcd: LCD Script Selection Library
 This library allows the user to define a set of autonomous scripts (and accompanying titles) that can then be selected prior to a match.
