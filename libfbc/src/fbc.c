@@ -68,7 +68,7 @@ void fbcReset(fbc_t* fbc) {
 		fbc->resetSense();
 	if (fbc->resetController)
 		fbc->resetController(fbc);
-	fbc->goal = 0;
+	fbc->goal = fbc->sense();
 }
 
 bool fbcSetGoal(fbc_t* fbc, int new_goal) {
