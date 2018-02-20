@@ -4,7 +4,7 @@
 #include "lcd.h"
 #include "string.h"
 
-#define LCD_TASK_DELTA 20
+#define LCD_TASK_DELTA 150
 
 static FILE* lcdPort;
 static int selection;
@@ -50,6 +50,10 @@ void _lcdScriptSelect() {
 		lcdPrintCentered(2, titles[scriptNumber]);
 		delay(150);
 	}
+  // Wait until comp control is changed
+  while (true) {
+    delay(20);
+  }
 }
 
 void lcdScriptSelect() {
