@@ -14,7 +14,7 @@
 
 #include <API.h>
 
-#define EXAMPLE_DB 15 // the motors don't do much betlow this speed
+#define EXAMPLE_DB 15 // the motors don't do much below this speed
 #define EXAMPLE_TOLERANCE 20 // Depends heavily on the system
 #define EXAMPLE_CONFIDENCE 5 // Means that the controller needs to be in the tolerance band for ~200ms, usually enough
 
