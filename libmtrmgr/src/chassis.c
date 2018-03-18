@@ -30,7 +30,7 @@ int chassisTrueSpeed(int cmd) {
 	                                                                                                       // linearize
 	                                                                                                       // motor output
 
-	return (cmd > 0 ? TrueSpeed[cmd] : (-1 * TrueSpeed[cmd]));
+	return (cmd > 0 ? TrueSpeed[cmd] : (-1 * TrueSpeed[-cmd]));
 }
 
 void chassisInit() {
