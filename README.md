@@ -1,4 +1,4 @@
-## BLRSLib by Purdue SIGBots
+## libBLRS by Purdue SIGBots
 
 Helpful utilities for making the most of PROS.
 
